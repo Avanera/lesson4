@@ -6,6 +6,15 @@ class Station
     @trains = []
   end
 
+
+  def show_trains(type)
+    @trains.each do |train|
+      puts "Passenger trains located in #{self.name}: #{train.number}" if train.type == "Passenger" && type == train.type
+      puts "Cargo trains located in #{self.name}: #{train.number}" if train.type == "Cargo" && type == train.type
+    end
+  end
+  
+  protected # потому что их не нужно вызывать вне класса, но они нужны в подклассах.
   def receive_train(train)
     @trains << train
   end
@@ -14,10 +23,4 @@ class Station
     @trains.delete(train)
   end
 
-  def show_trains(type)
-    @trains.each do |train|
-      puts "Passenger trains located in #{self.name}: #{train.number}" if train.type == "Passenger" && type == train.type
-      puts "Cargo trains located in #{self.name}: #{train.number}" if train.type == "Cargo" && type == train.type
-    end
-  end
 end
