@@ -7,9 +7,9 @@ class Rr
     @trains = []
     @wagons = []
     @routes = []
-    seed
+    #seed
   end
-
+=begin
   def seed
     station1 = Station.new('M')
     @stations << station1
@@ -24,19 +24,48 @@ class Rr
     route.add_station(station3)
     route.delete_station(station3)
 
-    train = PassengerTrain.new('123', "Passenger")
-    @trains << train
+    train1 = PassengerTrain.new('123', "Passenger")
+    @trains << train1
 
-    train.take_route(route)
+    train2 = CargoTrain.new('345', "Cargo")
+    @trains << train2
+
+
+    train1.take_route(route)
+    train2.take_route(route)
+
+    wagon1 = PassengerWagon.new("23", "Passenger")
+    @wagons << wagon1
+
+    wagon2 = CargoWagon.new("34", "Cargo")
+    @wagons << wagon2
+
+    train1.add_wagons(wagon1)
+    train2.add_wagons(wagon2)
   end
+=end
 
+  def info
+    puts "All stations:"
+    @stations.each.with_index(1) do |station|
+      puts "#{station.name}: "
+      station.show_trains("Cargo")
+      station.show_trains("Passenger")
+    end
+
+    puts "All routes:"
+    show_routes
+    puts "All trains:"
+    show_trains
+    puts "All wagons:"
+    show_wagons
+  end
 
   def create_station
     puts "Enter a station name"
     new_station = gets.chomp.capitalize!
     @stations << Station.new(new_station)
     puts "You have created a new station '#{new_station}'."
-    puts @stations # delete
   end
 
   def create_train
@@ -47,40 +76,82 @@ class Rr
     @trains << PassengerTrain.new(number, type) if type == "Passenger"
     @trains << CargoTrain.new(number, type) if type == "Cargo"
     puts "You have created a new #{type} train '#{number}'."
-      puts @trains # delete
   end
 
   def create_wagon
+    puts "Enter the number of the wagon"
+    number = gets.chomp.to_i
     puts "Enter the type of the wagon: Passenger or Cargo."
     type = gets.chomp.capitalize!
-    @wagons << PassengerWagon.new if type == "Passenger"
-    @wagons << CargoWagon.new if type == "Cargo"
-    puts "You have created a new #{type} wagon."
-      puts @wagons # delete
+    @wagons << PassengerWagon.new(number, type) if type == "Passenger"
+    @wagons << CargoWagon.new(number, type) if type == "Cargo"
+    puts "You have created a new #{type} wagon № #{number}."
+  end
+
+  def show_stations
+    @stations.each.with_index(1) do |station, index|
+      puts "#{index} - #{station.name}"
+    end
+  end
+
+  def select_station
+    show_stations
+    @stations[gets.to_i - 1]
+  end
+
+  def show_routes
+    @routes.each.with_index(1) do |route, index|
+      puts "#{index} - #{route.name}: "
+      route.show_stations
+    end
+  end
+
+  def select_route
+    show_routes
+    @routes[gets.to_i - 1]
+  end
+
+  def show_trains
+    @trains.each.with_index(1) do |train, index|
+      puts "#{index} - Train #{train.number}: "
+      train.show_speed
+      train.show_wagons_quant
+      puts "On route #{train.route.name}."
+      puts "Currently in #{train.current_station.name}."
+    end
+  end 
+
+  def select_train
+    show_trains
+    @trains[gets.to_i - 1]
+  end
+
+
+  def show_wagons
+    @wagons.each.with_index(1) do |wagon, index|
+    puts "#{index} - Wagon #{wagon.number}: #{wagon.type} "
+    end
+  end
+
+  def select_wagon
+    show_wagons
+    @wagons[gets.to_i - 1]
   end
 
   def create_route
     puts "Enter the name of the route"
     name = gets.chomp.capitalize!
-    puts "Enter the station of departure"
-    d = gets.chomp.capitalize!  # здесь добавляется текст, а не объект
+    puts "Enter the station of departure number:"
 
-    @stations.each do |station|  # делаем из текста объект
-    @depart = station if station.name == d
-    end
+    depart = select_station
 
-    puts "Enter the station of arrival"
-    a = gets.chomp.capitalize!
+    puts "Enter the station of arrival number:"
+   
+    arrive = select_station
 
-    @stations.each do |station|  # делаем из текста объект
-      @arrive = station if station.name == a
-    end
-
-    route = Route.new(name, @depart, @arrive)
+    route = Route.new(name, depart, arrive)
     @routes << route
-    puts "You have created a new route #{route.name}: #{@depart.name} - #{@arrive.name} ." # ссылки не работают, если станции вводить с заглавной буквы.
-    puts @routes # delete
-    puts route.stations 
+    puts "You have created a new route #{route.name}: #{depart.name} - #{arrive.name} ." # ссылки не работают, если станции вводить с заглавной буквы.
   end
 
   def create
@@ -105,65 +176,90 @@ class Rr
   end
 
   def add_station_to_route
-    puts "Enter the route name you want to add a station to:"
-    r = gets.chomp.capitalize! #K1
+    puts "Enter the route number:"
+    route = select_route
 
-    @routes.each do |route|  # делаем из текста объект
-    @route = route if route.name == r # @route - маршрут, который мы хотим изменить.
-    end
+    puts "Enter the station number you want to add:"
+    station = select_station
 
-    puts "Enter the name of the station you want to add:"
-    s = gets.chomp.capitalize! # N
-
-    @stations.each do |station|  # делаем из текста объект
-    @station = station if station.name == s # @station - объект, который мы хотим добавить
-    end
-
-    @route.add_station(@station)
-    puts "You have added a station #{@station.name} to the route #{@route.name}."
-    puts @route # delete
-    puts @routes # delete
+    route.add_station(station)
+    puts "You have added a station #{station.name} to the route #{route.name}."
   end
 
   def delete_station_from_route
-    puts "Enter the route name you want to delete a station from:"
-    r = gets.chomp.capitalize! #K1
+    puts "Enter the route number:"
+    route = select_route
 
-    @routes.each do |route|  # делаем из текста объект
-    @route = route if route.name == r # @route - маршрут, который мы хотим изменить.
-    end
-
-    puts "Enter the name of the station you want to delete:"
-    s = gets.chomp.capitalize! # N
-
-    @stations.each do |station|  # делаем из текста объект
-    @station = station if station.name == s # @station - объект, который мы хотим добавить
-    end
-
-    @route.delete_station(@station)
-    puts "You have deleted a station #{@station.name} from the route #{@route.name}."
-    puts @route # delete
-    puts @routes # delete
+    puts "Enter the station number to delete:"
+    station = select_station
+    
+    route.delete_station(station)
+    puts "You have deleted a station #{station.name} from the route #{route.name}."
   end
 
   def speed_up
     puts "Enter the train number:"
-    num = gets.chomp.to_i
+    train = select_train
+
     puts "Enter how much you want to speed up the train:"
     kmh = gets.chomp.to_i
 
-    @trains.each do |train|  # делаем из номера объект
-    @train = train if train.number == num # @train - поезд, который мы хотим ускорить.
-    end
-
-    @train.go(kmh)
+    train.go(kmh)
   end
 
+  def break_speed
+    puts "Enter the train number:"
+    train = select_train
 
+    puts "Enter how much you want to break down the train:"
+    kmh = gets.chomp.to_i
 
+    train.break(kmh)
+  end
 
+  def stop_train
+    puts "Enter the train number:"
+    train = select_train
+    train.stop
+  end
 
+  def connect_wagons
+    puts "Enter the train number:"
+    train = select_train
+    puts "Enter the wagon number to connect:"
+    wagon = select_wagon
 
+    train.add_wagons(wagon)
+  end
+
+  def disconnect_wagons
+    puts "Enter the train number:"
+    train = select_train
+    puts "Enter the wagon number to disconnect:"
+    wagon = select_wagon
+
+    train.delete_wagons(wagon)
+  end
+
+  def to_take_route
+    puts "Enter the train number:"
+    train = select_train
+    puts "Enter the route number:"
+    route = select_route
+    train.take_route(route)
+  end
+
+  def move_forward
+    puts "Enter the train number:"
+    train = select_train
+    train.forward
+  end
+
+  def move_backward
+    puts "Enter the train number:"
+    train = select_train
+    train.backward
+  end
 
   def operate
     puts "Enter 1, if you want to add a station to a route.
@@ -180,25 +276,25 @@ class Rr
     operate_case = gets.chomp.to_i
     case operate_case
     when 1
-    add_station_to_route
+      add_station_to_route
     when 2
-    delete_station_from_route
+      delete_station_from_route
     when 3
-    speed_up
+      speed_up
     when 4
-    brake
+      break_speed
     when 5
-      stop
+      stop_train
     when 6
-      add_wagons
+      connect_wagons
     when 7
-      delete_wagons
+      disconnect_wagons
     when 8
-      take_route
+      to_take_route
     when 9
-      forward
+      move_forward
     when 10
-      backward
+      move_backward
     when 0
       start               
     end
@@ -206,7 +302,7 @@ class Rr
 
   def start
     i = nil
-    while i != 0 do   # почему-то приходится 3 раза вводить 0, чтобы выйти из программы
+    while i != 0 do  
       puts "Enter 1, if you want to create a station. train, wagon or route.
       Enter 2, if you want to operate these objects.
       Enter 3, if you want to receive current data about objects.
@@ -214,8 +310,7 @@ class Rr
       i = gets.chomp.to_i
       create if i == 1
       operate if i == 2
+      info if i == 3
     end
   end
-
-
 end

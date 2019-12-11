@@ -1,6 +1,6 @@
 class Train
   attr_accessor :speed
-  attr_reader :current_station, :route, :number, :type
+  attr_reader :current_station, :route, :number, :type, :wagons_quant
 
   def initialize(number, type)
     @number = number
@@ -15,7 +15,8 @@ class Train
   end
 
   def break(speed)
-    @speed = @speed - speed
+    @speed = @speed - speed 
+    @speed = 0 if @speed < 0 
     puts "The train #{self.number} goes with #{@speed} speed."
   end
 
@@ -31,7 +32,7 @@ class Train
   def show_wagons_quant
     i = @wagons_quant
     i = 0 if @wagons_quant == []
-    puts "The wagons quantity of train #{self.number} is #{i}."
+    puts "The wagons quantity of train #{self.number} is #{i.length}."
   end
 
   def add_wagons(wagon)

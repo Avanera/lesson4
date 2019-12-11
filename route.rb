@@ -17,7 +17,6 @@ class Route
   end
 
   def show_stations
-    puts "Route 1:"
     @stations.each.with_index(1) do |station, index|
       puts "Station #{index}: #{station.name}."
     end

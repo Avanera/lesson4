@@ -13,8 +13,7 @@ class Station
       puts "Cargo trains located in #{self.name}: #{train.number}" if train.type == "Cargo" && type == train.type
     end
   end
-  
-  protected # потому что их не нужно вызывать вне класса, но они нужны в подклассах.
+
   def receive_train(train)
     @trains << train
   end
