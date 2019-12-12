@@ -53,7 +53,7 @@ train1.go(50)
 train1.break(30)
 train1.stop
 train1.show_speed
-train1.show_wagons_quant
+train1.show_wagons
 #train1.add_wagons
 #train1.delete_wagons
 
@@ -75,11 +75,11 @@ wagon2 = CargoWagon.new
 
 train1.add_wagons(wagon1)
 train1.delete_wagons(wagon1)
-train1.show_wagons_quant
+train1.show_wagons
 
 train2.add_wagons(wagon2)
 train2.delete_wagons(wagon2)
-train2.show_wagons_quant
+train2.show_wagons
 
 =begin
   

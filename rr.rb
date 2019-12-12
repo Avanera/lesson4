@@ -63,7 +63,7 @@ class Rr
 
   def create_station
     puts "Enter a station name"
-    new_station = gets.chomp.capitalize!
+    new_station = gets.chomp.capitalize
     @stations << Station.new(new_station)
     puts "You have created a new station '#{new_station}'."
   end
@@ -72,7 +72,7 @@ class Rr
     puts "Enter the number of the train"
     number = gets.chomp.to_i
     puts "Enter the type of the train: Passenger or Cargo."
-    type = gets.chomp.capitalize!
+    type = gets.chomp.capitalize
     @trains << PassengerTrain.new(number, type) if type == "Passenger"
     @trains << CargoTrain.new(number, type) if type == "Cargo"
     puts "You have created a new #{type} train '#{number}'."
@@ -82,7 +82,7 @@ class Rr
     puts "Enter the number of the wagon"
     number = gets.chomp.to_i
     puts "Enter the type of the wagon: Passenger or Cargo."
-    type = gets.chomp.capitalize!
+    type = gets.chomp.capitalize
     @wagons << PassengerWagon.new(number, type) if type == "Passenger"
     @wagons << CargoWagon.new(number, type) if type == "Cargo"
     puts "You have created a new #{type} wagon № #{number}."
@@ -115,7 +115,7 @@ class Rr
     @trains.each.with_index(1) do |train, index|
       puts "#{index} - Train #{train.number}: "
       train.show_speed
-      train.show_wagons_quant
+      train.show_wagons
       puts "On route #{train.route.name}."
       puts "Currently in #{train.current_station.name}."
     end
@@ -140,7 +140,7 @@ class Rr
 
   def create_route
     puts "Enter the name of the route"
-    name = gets.chomp.capitalize!
+    name = gets.chomp.capitalize
     puts "Enter the station of departure number:"
 
     depart = select_station
