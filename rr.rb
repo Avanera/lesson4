@@ -301,16 +301,21 @@ class Rr
   end
 
   def start
-    i = nil
-    while i != 0 do  
+    loop do 
       puts "Enter 1, if you want to create a station. train, wagon or route.
       Enter 2, if you want to operate these objects.
       Enter 3, if you want to receive current data about objects.
       Enter 0, if you want to quit the program."
-      i = gets.chomp.to_i
-      create if i == 1
-      operate if i == 2
-      info if i == 3
+      case gets.chomp.to_i
+      when 1
+        create
+      when 2
+        operate
+      when 3
+        info
+      when 0
+        exit
+      end
     end
   end
 end
